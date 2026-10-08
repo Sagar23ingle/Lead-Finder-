@@ -2,8 +2,8 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Lead Finder — High-Potential Business Discovery & Qualification',
-  description: 'Find, analyze and qualify high-potential business leads with live Google Places discovery, AI audit scoring, and outreach automation.',
+  title: 'Outreachly — Intelligent Client Prospecting & Pipeline',
+  description: 'Premium client discovery, opportunity qualification, and high-converting outreach pipeline.',
 };
 
 export const viewport: Viewport = {
@@ -18,7 +18,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body>{children}</body>
     </html>
   );

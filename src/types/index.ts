@@ -153,6 +153,7 @@ export interface SalesGuidance {
 export interface LeadAnalysis {
   businessId: string;
   score: number; // 0 - 100
+  opportunityScore?: number;
   tier: 'HOT' | 'WARM' | 'LOW';
   reasons: string[];
   audit: WebsiteAudit;
@@ -263,6 +264,7 @@ export interface LeadCrmRecord {
   followUpSequence: FollowUpItem[];
   proposal: MiniProposal | null;
   demoShared?: boolean;
+  demoGenerated?: boolean;
   demoSharedAt?: string;
   createdAt: string;
   updatedAt: string;

@@ -34,7 +34,7 @@ export async function generateMetadata({
         };
       }
     }
-    return { title: 'Website Demo — Lead Finder' };
+    return { title: 'Website Demo — Outreachly' };
   }
 
   const { business, demo } = record;
