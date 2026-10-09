@@ -23,69 +23,23 @@ export interface DemoRecord {
   updatedAt: string;
 }
 
-export function generateDemoSlug(businessName: string, id: string): string {
-  const cleanName = (businessName || 'business')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 40);
+import {
+  generateDemoSlug,
+  encodeCompactBusiness,
+  decodeCompactBusiness,
+  buildDemoPath,
+  buildDemoUrl,
+  extractPlaceIdFromSlugOrId,
+} from '@/lib/utils/demoUrl';
 
-  const cleanId = (id || 'demo').replace(/[^a-zA-Z0-9_-]/g, '');
-  return `${cleanName}--${cleanId}`;
-}
-
-export function encodeCompactBusiness(b: Business): string {
-  try {
-    const compact = {
-      id: b.id || b.external_id,
-      name: b.name || b.businessName,
-      category: b.category,
-      address: b.address,
-      city: b.city,
-      country: b.country,
-      phone: b.phone,
-      website: b.website,
-      rating: b.rating,
-      reviewCount: b.reviewCount || b.review_count,
-      googleMapsUrl: b.googleMapsUrl || b.google_maps_url,
-      openingStatus: b.opening_status || (b as any).openingStatus || 'Open Now',
-    };
-    return Buffer.from(JSON.stringify(compact), 'utf8').toString('base64url');
-  } catch {
-    return '';
-  }
-}
-
-export function decodeCompactBusiness(encoded: string): Business | null {
-  try {
-    if (!encoded) return null;
-    const json = Buffer.from(encoded, 'base64url').toString('utf8');
-    const b = JSON.parse(json);
-    if (!b || !b.name) return null;
-    return {
-      id: b.id || 'demo',
-      external_id: b.id || 'demo',
-      placeId: b.id || 'demo',
-      name: b.name,
-      businessName: b.name,
-      category: b.category || 'Local Business',
-      address: b.address || '',
-      city: b.city || '',
-      country: b.country || '',
-      phone: b.phone || '',
-      website: b.website || null,
-      google_maps_url: b.googleMapsUrl || null,
-      googleMapsUrl: b.googleMapsUrl || null,
-      rating: b.rating || 4.5,
-      review_count: b.reviewCount || 10,
-      reviewCount: b.reviewCount || 10,
-      opening_status: b.openingStatus || 'Open Now',
-      source: 'google_places',
-    } as Business;
-  } catch {
-    return null;
-  }
-}
+export {
+  generateDemoSlug,
+  encodeCompactBusiness,
+  decodeCompactBusiness,
+  buildDemoPath,
+  buildDemoUrl,
+  extractPlaceIdFromSlugOrId,
+};
 
 /**
  * Persistent Demo Repository that survives Vercel serverless container recycling
@@ -195,54 +149,99 @@ class PersistentDemoRepository {
   /**
    * Retrieves a demo record by ID, slug, or Place ID.
    * On Vercel serverless, if the record is not in local memory, it checks:
-   * 1. Supabase (if configured)
-   * 2. Lead Repository (stored businesses)
-   * 3. Google Places API (if the ID contains or is a Google Place ID)
+   * 1. In-memory store (by full key or extracted ID)
+   * 2. Local disk store
+   * 3. Direct compact business payload decoding
+   * 4. Supabase demos table (if configured)
+   * 5. Lead Repository (stored businesses by ID or extracted ID)
+   * 6. Google Places API (if the ID contains or is a Google Place ID)
    */
   public async getDemo(idOrSlug: string): Promise<DemoRecord | null> {
     if (!idOrSlug) return null;
     const key = idOrSlug.trim();
+    const extractedId = key.includes('--') ? key.split('--').slice(1).join('--') : null;
 
     // 1. Check in-memory store
     if (this.memoryStore[key]) {
       return this.memoryStore[key];
     }
+    if (extractedId && this.memoryStore[extractedId]) {
+      return this.memoryStore[extractedId];
+    }
 
-    // 2. Refresh local file
+    // 2. Refresh local file store
     this.readStore();
     if (this.memoryStore[key]) {
       return this.memoryStore[key];
     }
+    if (extractedId && this.memoryStore[extractedId]) {
+      return this.memoryStore[extractedId];
+    }
 
     // 3. Check by partial match in memory
     for (const d of Object.values(this.memoryStore)) {
-      if (d.id === key || d.slug === key || d.leadId === key) {
+      if (
+        d.id === key ||
+        d.slug === key ||
+        d.leadId === key ||
+        (extractedId && (d.id === extractedId || d.leadId === extractedId))
+      ) {
         return d;
       }
     }
 
-    // 4. Check Supabase if configured
-    if (this.supabase) {
-      try {
-        const { data, error } = await this.supabase
-          .from('demos')
-          .select('data')
-          .or(`id.eq.${key},slug.eq.${key},lead_id.eq.${key}`)
-          .maybeSingle();
-
-        if (data?.data) {
-          const rec = data.data as DemoRecord;
-          this.memoryStore[key] = rec;
-          return rec;
-        }
-      } catch {
-        // ignore
+    // 4. Check if the key itself is an encoded compact business payload
+    if (key.startsWith('ey') || key.length > 50) {
+      const decodedBiz = decodeCompactBusiness(key);
+      if (decodedBiz) {
+        const demo = generateSmartDemo(decodedBiz);
+        const id = decodedBiz.id || 'demo';
+        const slug = generateDemoSlug(decodedBiz.name, id);
+        const record: DemoRecord = {
+          id,
+          slug,
+          leadId: id,
+          businessName: decodedBiz.name,
+          businessType: demo.businessType,
+          business: decodedBiz,
+          demo,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+        await this.saveDemo(record);
+        return record;
       }
     }
 
-    // 5. Check Lead Repository for existing business
+    // 5. Check Supabase if configured
+    if (this.supabase) {
+      try {
+        const safeKey = key.replace(/[^a-zA-Z0-9_.-]/g, '');
+        if (safeKey) {
+          const { data } = await this.supabase
+            .from('demos')
+            .select('data')
+            .or(`id.eq.${safeKey},slug.eq.${safeKey},lead_id.eq.${safeKey}`)
+            .maybeSingle();
+
+          if (data?.data) {
+            const rec = data.data as DemoRecord;
+            this.memoryStore[key] = rec;
+            return rec;
+          }
+        }
+      } catch {
+        // ignore table absence or query error
+      }
+    }
+
+    // 6. Check Lead Repository for existing business (by key or extracted ID)
     const leadRepo = getLeadRepository();
-    const existingBusiness = await leadRepo.getBusinessById(key);
+    let existingBusiness = await leadRepo.getBusinessById(key);
+    if (!existingBusiness && extractedId) {
+      existingBusiness = await leadRepo.getBusinessById(extractedId);
+    }
+
     if (existingBusiness) {
       const demo = generateSmartDemo(existingBusiness);
       const slug = generateDemoSlug(existingBusiness.name, existingBusiness.id);
@@ -261,11 +260,9 @@ class PersistentDemoRepository {
       return record;
     }
 
-    // 6. Check if ID contains or is a Google Place ID (ChIJ...)
-    // This solves the Vercel cold-container 404 issue permanently!
-    const placeIdMatch = key.match(/(ChIJ[a-zA-Z0-9_-]+)/);
-    if (placeIdMatch) {
-      const placeId = placeIdMatch[1];
+    // 7. Check if ID contains or is a Google Place ID (ChIJ...)
+    const placeId = extractPlaceIdFromSlugOrId(key) || (extractedId ? extractPlaceIdFromSlugOrId(extractedId) : null);
+    if (placeId) {
       const verifiedBusiness = await GooglePlacesService.getPlaceById(placeId);
       if (verifiedBusiness) {
         const demo = generateSmartDemo(verifiedBusiness);

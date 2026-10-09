@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "node --experimental-strip-types scripts/test-demo-persistence.mjs"
+  },
+  "imports": {
+    "@/*": "./src/*"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",

@@ -25,6 +25,7 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { normalizeWhatsAppNumber, formatDisplayPhone } from '@/lib/utils/phone';
 import { downloadLeadsForExcel, copyForGoogleSheets } from '@/lib/utils/exportLeads';
+import { buildDemoPath } from '@/lib/utils/demoUrl';
 
 const ExportLeadsModal = dynamic(
   () => import('./ExportLeadsModal').then((mod) => mod.ExportLeadsModal),
@@ -520,7 +521,7 @@ export const LeadTable: React.FC<LeadTableProps> = ({
 
                       {/* Demo */}
                       <Link
-                        href={`/demo/${business.id || business.external_id}`}
+                        href={buildDemoPath(business)}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{
@@ -680,7 +681,7 @@ export const LeadTable: React.FC<LeadTableProps> = ({
                 </button>
 
                 <Link
-                  href={`/demo/${business.id || business.external_id}`}
+                  href={buildDemoPath(business)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mobile-action-btn demo"

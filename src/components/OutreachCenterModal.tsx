@@ -36,6 +36,7 @@ import {
 } from 'lucide-react';
 import { normalizeWhatsAppNumber, buildWhatsAppUrl, formatDisplayPhone } from '@/lib/utils/phone';
 import { getTemplateForBusiness, DEMO_TEMPLATES, DemoTemplateId } from '@/lib/templates/demoTemplates';
+import { buildDemoPath, buildDemoUrl } from '@/lib/utils/demoUrl';
 
 interface Props {
   business: Business;
@@ -579,7 +580,7 @@ export const OutreachCenterModal: React.FC<Props> = ({
                   )}
 
                   <a
-                    href={`/demo/${business.id || business.external_id}?t=${getTemplateForBusiness(business.id || business.external_id, business.name)}`}
+                    href={buildDemoPath(business, { templateId: getTemplateForBusiness(business.id || business.external_id, business.name) })}
                     target="_blank"
                     rel="noreferrer"
                     style={{
@@ -603,7 +604,7 @@ export const OutreachCenterModal: React.FC<Props> = ({
                     type="button"
                     onClick={() => {
                       const tplId = getTemplateForBusiness(business.id || business.external_id, business.name);
-                      const url = `${typeof window !== 'undefined' ? window.location.origin : ''}/demo/${business.id || business.external_id}?t=${tplId}`;
+                      const url = buildDemoUrl(business, { templateId: tplId });
                       handleCopy(url, 'demo_link');
                       handleTrackDemoShared();
                     }}

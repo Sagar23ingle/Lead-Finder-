@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDemoRepository, generateDemoSlug, encodeCompactBusiness } from '@/lib/db/demos';
+import { getDemoRepository, generateDemoSlug, encodeCompactBusiness, buildDemoUrl } from '@/lib/db/demos';
 import { getLeadRepository } from '@/lib/db';
 import { GooglePlacesService } from '@/lib/services/googlePlaces';
 import { generateSmartDemo } from '@/lib/services/smartDemoEngine';
@@ -52,8 +52,7 @@ export async function POST(req: NextRequest) {
 
     const host = req.headers.get('host') || 'localhost:3000';
     const protocol = host.includes('localhost') ? 'http' : 'https';
-    const encoded = encodeCompactBusiness(targetBusiness);
-    const publicUrl = `${protocol}://${host}/demo/${slug}${encoded ? `?d=${encoded}` : ''}`;
+    const publicUrl = buildDemoUrl(targetBusiness, { origin: `${protocol}://${host}` });
 
     return NextResponse.json({
       success: true,

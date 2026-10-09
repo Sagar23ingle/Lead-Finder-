@@ -21,6 +21,7 @@ import {
   Share2,
 } from 'lucide-react';
 import { normalizeWhatsAppNumber, buildWhatsAppUrl } from '@/lib/utils/phone';
+import { buildDemoPath, buildDemoUrl } from '@/lib/utils/demoUrl';
 
 interface LeadAnalysisModalProps {
   business: Business;
@@ -67,7 +68,7 @@ export const LeadAnalysisModal: React.FC<LeadAnalysisModalProps> = ({
 
   const copyText = (text: string, type: string) => {
     if (typeof window !== 'undefined') {
-      const demoUrl = `${window.location.origin}/demo/${business.id || business.external_id}`;
+      const demoUrl = buildDemoUrl(business);
       const processed = text.replace(/\[DEMO_LINK\]/g, demoUrl);
       navigator.clipboard.writeText(processed);
       setCopiedType(type);
@@ -85,6 +86,7 @@ export const LeadAnalysisModal: React.FC<LeadAnalysisModalProps> = ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           businessId: business.id || business.external_id,
+          business,
           replyText: replyInput.trim(),
         }),
       });
@@ -103,7 +105,7 @@ export const LeadAnalysisModal: React.FC<LeadAnalysisModalProps> = ({
 
   const openWhatsAppDirect = (messageText: string) => {
     if (typeof window === 'undefined') return;
-    const demoUrl = `${window.location.origin}/demo/${business.id || business.external_id}`;
+    const demoUrl = buildDemoUrl(business);
     const processed = messageText.replace(/\[DEMO_LINK\]/g, demoUrl);
     const waUrl = buildWhatsAppUrl(business.phone, processed);
     if (waUrl) {
@@ -575,7 +577,7 @@ export const LeadAnalysisModal: React.FC<LeadAnalysisModalProps> = ({
 
                     <div style={{ marginTop: '1.25rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                       <a
-                        href={`/demo/${business.id || business.external_id}`}
+                        href={buildDemoPath(business)}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{
@@ -596,7 +598,7 @@ export const LeadAnalysisModal: React.FC<LeadAnalysisModalProps> = ({
                       </a>
 
                       <button
-                        onClick={() => copyText(`${window.location.origin}/demo/${business.id || business.external_id}`, 'demo_link')}
+                        onClick={() => copyText(buildDemoUrl(business), 'demo_link')}
                         type="button"
                         style={{
                           backgroundColor: '#334155',

@@ -26,12 +26,17 @@ export async function POST(req: NextRequest) {
 
     if (body.businessId) {
       const repo = getLeadRepository();
-      const business = await repo.getBusinessById(String(body.businessId));
-      if (!business) {
+      let business = await repo.getBusinessById(String(body.businessId));
+      if (!business && body.business) {
+        business = body.business;
+      }
+      if (!business && !body.url) {
         return NextResponse.json({ error: 'Business not found' }, { status: 404 });
       }
-      targetUrl = business.website;
-      businessName = business.name;
+      if (business) {
+        targetUrl = business.website;
+        businessName = business.name;
+      }
     } else if (body.url) {
       targetUrl = String(body.url).trim();
       businessName = sanitizeString(body.businessName || '');

@@ -11,23 +11,32 @@ export const dynamic = 'force-dynamic';
  */
 export async function POST(req: NextRequest) {
   try {
-    const { businessId, replyText } = await req.json();
+    const { businessId, replyText, business: rawBusiness } = await req.json();
 
-    if (!businessId || !replyText || !replyText.trim()) {
+    if ((!businessId && !rawBusiness) || !replyText || !replyText.trim()) {
       return NextResponse.json(
-        { error: 'businessId and replyText are required' },
+        { error: 'businessId or business, and replyText are required' },
         { status: 400 }
       );
     }
 
     const repo = getLeadRepository();
-    const business = await repo.getBusinessById(businessId);
+    let business = businessId ? await repo.getBusinessById(businessId) : null;
+    if (!business && rawBusiness) {
+      business = rawBusiness;
+    }
 
     if (!business) {
       return NextResponse.json({ error: 'Business not found' }, { status: 404 });
     }
 
-    const analysis = await repo.getLeadAnalysis(businessId);
+    let analysis = businessId ? await repo.getLeadAnalysis(businessId) : null;
+    if (!analysis) {
+      try {
+        const { LeadAnalyzer } = await import('@/lib/services/leadAnalyzer');
+        analysis = await LeadAnalyzer.analyze(business);
+      } catch {}
+    }
     const aiAnalysis = await CrmEngine.analyzeProspectReply(
       replyText.trim(),
       business,

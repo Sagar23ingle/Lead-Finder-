@@ -117,3 +117,31 @@ CREATE POLICY "Allow public insert to search_businesses" ON search_businesses FO
 
 CREATE POLICY "Allow public read access to lead_scores" ON lead_scores FOR SELECT USING (true);
 CREATE POLICY "Allow public insert/update to lead_scores" ON lead_scores FOR ALL USING (true);
+
+-- 8. Demos table
+-- Stores permanent website pitch demos for target prospects across all serverless restarts
+CREATE TABLE IF NOT EXISTS demos (
+    id TEXT PRIMARY KEY,                           -- Stable Place ID or demo UUID / synthetic ID
+    slug TEXT NOT NULL,                           -- SEO-friendly slug
+    lead_id TEXT,                                 -- Reference to business id or external_id
+    business_name TEXT NOT NULL,
+    business_type TEXT,
+    data JSONB NOT NULL,                          -- Complete smart demo website payload & styles
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_demos_slug ON demos(slug);
+CREATE INDEX IF NOT EXISTS idx_demos_lead_id ON demos(lead_id);
+CREATE INDEX IF NOT EXISTS idx_demos_created_at ON demos(created_at DESC);
+
+DROP TRIGGER IF EXISTS trg_demos_updated_at ON demos;
+CREATE TRIGGER trg_demos_updated_at
+    BEFORE UPDATE ON demos
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+ALTER TABLE demos ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public read access to demos" ON demos FOR SELECT USING (true);
+CREATE POLICY "Allow public insert/update to demos" ON demos FOR ALL USING (true);
+

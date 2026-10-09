@@ -24,6 +24,7 @@ import Link from 'next/link';
 import { formatDisplayPhone } from '@/lib/utils/phone';
 import { downloadLeadsForExcel, copyForGoogleSheets } from '@/lib/utils/exportLeads';
 import { ExportLeadsModal } from './ExportLeadsModal';
+import { buildDemoPath } from '@/lib/utils/demoUrl';
 
 interface Props {
   businesses: Business[];
@@ -407,7 +408,7 @@ export const CrmPipelineView: React.FC<Props> = ({
                           </button>
 
                           <Link
-                            href={`/demo/${b.id || b.external_id}`}
+                            href={buildDemoPath(b)}
                             target="_blank"
                             rel="noopener noreferrer"
                             style={{

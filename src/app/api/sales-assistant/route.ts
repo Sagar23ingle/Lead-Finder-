@@ -6,15 +6,26 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(req: NextRequest) {
   try {
-    const { businessId, replyText } = await req.json();
+    const { businessId, replyText, business: rawBusiness } = await req.json();
 
-    if (!businessId) {
-      return NextResponse.json({ error: 'businessId is required' }, { status: 400 });
+    if (!businessId && !rawBusiness) {
+      return NextResponse.json({ error: 'businessId or business object is required' }, { status: 400 });
     }
 
     const repo = getLeadRepository();
-    const business = await repo.getBusinessById(String(businessId));
-    let analysis = await repo.getLeadAnalysis(String(businessId));
+    let business = businessId ? await repo.getBusinessById(String(businessId)) : null;
+    if (!business && rawBusiness) {
+      business = rawBusiness;
+    }
+
+    let analysis = businessId ? await repo.getLeadAnalysis(String(businessId)) : null;
+    if (!analysis && business) {
+      try {
+        analysis = await LeadAnalyzer.analyze(business);
+      } catch {
+        // ignore analysis failure, continue with defaults
+      }
+    }
 
     if (!business && !analysis) {
       return NextResponse.json({ error: 'Business or lead analysis not found' }, { status: 404 });

@@ -207,12 +207,18 @@ class SupabaseLeadRepository implements LeadRepository {
   }
 
   async getBusinessById(id: string): Promise<Business | null> {
-    const { data, error } = await this.client
-      .from('businesses')
-      .select('*')
-      .or(`id.eq.${id},external_id.eq.${id}`)
-      .limit(1)
-      .single();
+    if (!id) return null;
+    const cleanId = id.trim();
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(cleanId);
+
+    let query = this.client.from('businesses').select('*');
+    if (isUuid) {
+      query = query.or(`id.eq.${cleanId},external_id.eq.${cleanId}`);
+    } else {
+      query = query.eq('external_id', cleanId);
+    }
+
+    const { data, error } = await query.limit(1).maybeSingle();
 
     if (error || !data) return null;
     return data as Business;
@@ -257,13 +263,19 @@ class SupabaseLeadRepository implements LeadRepository {
   async getLeadAnalysis(businessId: string): Promise<LeadAnalysis | null> {
     const b = await this.getBusinessById(businessId);
     const targetId = b ? b.id : businessId;
+    const isUuid = targetId && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(targetId);
+
+    if (!isUuid) {
+      const local = new LocalPersistentLeadRepository();
+      return local.getLeadAnalysis(businessId);
+    }
 
     const { data, error } = await this.client
       .from('lead_scores')
       .select('*')
       .eq('business_id', targetId)
       .limit(1)
-      .single();
+      .maybeSingle();
 
     if (error || !data || !data.notes) return null;
     try {
@@ -332,18 +344,22 @@ class SupabaseLeadRepository implements LeadRepository {
     try {
       const b = await this.getBusinessById(businessId);
       const targetId = b ? b.id : businessId;
-      const { data, error } = await this.client
-        .from('lead_scores')
-        .select('*')
-        .eq('business_id', targetId)
-        .limit(1)
-        .single();
+      const isUuid = targetId && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(targetId);
 
-      if (!error && data && data.notes) {
-        try {
-          const parsed = JSON.parse(data.notes);
-          if (parsed.crm) return parsed.crm;
-        } catch {}
+      if (isUuid) {
+        const { data, error } = await this.client
+          .from('lead_scores')
+          .select('*')
+          .eq('business_id', targetId)
+          .limit(1)
+          .maybeSingle();
+
+        if (!error && data && data.notes) {
+          try {
+            const parsed = JSON.parse(data.notes);
+            if (parsed.crm) return parsed.crm;
+          } catch {}
+        }
       }
     } catch {}
 

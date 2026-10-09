@@ -16,6 +16,7 @@ import {
   Search,
 } from 'lucide-react';
 import Link from 'next/link';
+import { buildDemoPath, buildDemoUrl } from '@/lib/utils/demoUrl';
 
 interface DemosWorkspaceProps {
   businesses: Business[];
@@ -47,11 +48,12 @@ export const DemosWorkspace: React.FC<DemosWorkspaceProps> = ({
     );
   });
 
-  const handleCopyLink = (businessId: string) => {
+  const handleCopyLink = (business: Business) => {
     if (typeof window === 'undefined') return;
-    const url = `${window.location.origin}/demo/${encodeURIComponent(businessId)}`;
+    const url = buildDemoUrl(business);
+    const id = business.id || business.external_id;
     navigator.clipboard.writeText(url).then(() => {
-      setCopiedId(businessId);
+      setCopiedId(id);
       setTimeout(() => setCopiedId(null), 2000);
     });
   };
@@ -129,7 +131,7 @@ export const DemosWorkspace: React.FC<DemosWorkspaceProps> = ({
             const crm = crmRecords[b.id] || crmRecords[b.external_id];
             const analysis = analyses[b.id] || analyses[b.external_id];
             const isCopied = copiedId === id;
-            const demoUrl = `/demo/${encodeURIComponent(id)}`;
+            const demoUrl = buildDemoPath(b);
 
             return (
               <div key={id} className="glass-card demo-record-card">
@@ -183,7 +185,7 @@ export const DemosWorkspace: React.FC<DemosWorkspaceProps> = ({
 
                   <button
                     type="button"
-                    onClick={() => handleCopyLink(id)}
+                    onClick={() => handleCopyLink(b)}
                     className="btn-demo-action"
                     title="Copy full demo link to clipboard"
                   >

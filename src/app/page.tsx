@@ -163,6 +163,20 @@ export default function OutreachlyPage() {
     fetchStatusAndHistory();
   }, [fetchStatusAndHistory]);
 
+  // Keep client-side business cache synchronized to enable cold-start demo recovery
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const pool = allStoredBusinesses.length > 0 ? allStoredBusinesses : businesses;
+      if (pool.length > 0) {
+        try {
+          localStorage.setItem('outreachly_recent_businesses', JSON.stringify(pool));
+        } catch {
+          // ignore storage quota
+        }
+      }
+    }
+  }, [businesses, allStoredBusinesses]);
+
   // Execute a live search
   const handleSearch = async (params: {
     country: string;

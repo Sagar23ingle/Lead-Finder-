@@ -1,5 +1,6 @@
 import { Business, LeadAnalysis, LeadCrmRecord } from '@/types';
 import { normalizeWhatsAppNumber } from './phone';
+import { buildDemoUrl } from './demoUrl';
 
 /**
  * Escapes a cell value for RFC 4180 CSV compliance
@@ -70,7 +71,7 @@ export function generateLeadsCsv(
     const dealValue = analysis?.report?.suggestedPriceRange || analysis?.salesGuidance?.pricingStrategy || (b.website ? '$1,000 - $2,500' : '$1,500 - $3,500');
 
     const appOrigin = typeof window !== 'undefined' ? window.location.origin : '';
-    const demoLink = appOrigin ? `${appOrigin}/demo/${b.id}` : `/demo/${b.id}`;
+    const demoLink = buildDemoUrl(b, { origin: appOrigin });
     const stage = crm?.stage || 'discovered';
 
     return [
@@ -180,7 +181,7 @@ export function generateLeadsTsv(
     const dealValue = analysis?.report?.suggestedPriceRange || analysis?.salesGuidance?.pricingStrategy || (b.website ? '$1,000 - $2,500' : '$1,500 - $3,500');
 
     const appOrigin = typeof window !== 'undefined' ? window.location.origin : '';
-    const demoLink = appOrigin ? `${appOrigin}/demo/${b.id}` : `/demo/${b.id}`;
+    const demoLink = buildDemoUrl(b, { origin: appOrigin });
     const stage = crm?.stage || 'discovered';
 
     return [

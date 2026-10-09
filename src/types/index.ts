@@ -335,3 +335,14 @@ export interface BusinessInsights {
   isPreliminary: boolean;
 }
 
+export interface DemoRecord {
+  id: string;
+  slug: string;
+  leadId: string;
+  businessName: string;
+  businessType: string;
+  business: Business;
+  demo: any;
+  createdAt: string;
+  updatedAt: string;
+}

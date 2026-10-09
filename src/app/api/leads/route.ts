@@ -15,6 +15,41 @@ export async function GET(req: NextRequest) {
 
   try {
     const { searchParams } = new URL(req.url);
+    const targetBusinessId = sanitizeString(searchParams.get('businessId') || searchParams.get('id'));
+    const repo = getLeadRepository();
+
+    // 1. Single lead lookup by ID or Google Place ID
+    if (targetBusinessId) {
+      let business = await repo.getBusinessById(targetBusinessId);
+      if (!business && targetBusinessId.includes('--')) {
+        const extracted = targetBusinessId.split('--').slice(1).join('--');
+        business = await repo.getBusinessById(extracted);
+      }
+
+      if (!business) {
+        const placeMatch = targetBusinessId.match(/(ChIJ[a-zA-Z0-9_-]+)/);
+        if (placeMatch) {
+          const { GooglePlacesService } = await import('@/lib/services/googlePlaces');
+          business = await GooglePlacesService.getPlaceById(placeMatch[1]);
+          if (business) {
+            await repo.saveBusinesses([business]);
+          }
+        }
+      }
+
+      if (business) {
+        return NextResponse.json({
+          success: true,
+          lead: business,
+        });
+      }
+
+      return NextResponse.json(
+        { success: false, error: 'Business not found' },
+        { status: 404 }
+      );
+    }
+
     const searchId = sanitizeString(searchParams.get('searchId'));
     const city = sanitizeString(searchParams.get('city'));
     const niche = sanitizeString(searchParams.get('niche'));
@@ -23,7 +58,6 @@ export async function GET(req: NextRequest) {
     const limit = Math.min(100, Math.max(1, parseInt(searchParams.get('limit') || '50', 10)));
     const offset = Math.max(0, parseInt(searchParams.get('offset') || '0', 10));
 
-    const repo = getLeadRepository();
     let businesses: Business[] = [];
 
     if (searchId) {

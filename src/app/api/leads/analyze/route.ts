@@ -28,7 +28,22 @@ export async function POST(req: NextRequest) {
     // 2. Single business analysis by ID
     if (body.businessId) {
       const businessId = String(body.businessId).trim();
-      const business = await repo.getBusinessById(businessId);
+      let business = await repo.getBusinessById(businessId);
+      if (!business && body.business) {
+        const fallbackBiz = body.business as Business;
+        business = fallbackBiz;
+        await repo.saveBusinesses([fallbackBiz]);
+      }
+      if (!business) {
+        const placeMatch = businessId.match(/(ChIJ[a-zA-Z0-9_-]+)/);
+        if (placeMatch) {
+          const { GooglePlacesService } = await import('@/lib/services/googlePlaces');
+          business = await GooglePlacesService.getPlaceById(placeMatch[1]);
+          if (business) {
+            await repo.saveBusinesses([business]);
+          }
+        }
+      }
       if (!business) {
         return NextResponse.json({ error: 'Business not found' }, { status: 404 });
       }

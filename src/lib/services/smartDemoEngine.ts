@@ -1,4 +1,4 @@
-import { Business, LeadAnalysis } from '@/types';
+import type { Business, LeadAnalysis } from '@/types';
 
 export type DetectedBusinessType =
   | 'DENTIST'

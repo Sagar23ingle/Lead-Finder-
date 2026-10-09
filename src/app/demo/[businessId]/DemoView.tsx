@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DemoRecord } from '@/lib/db/demos';
 import {
   Phone,
@@ -37,6 +37,28 @@ export const DemoView: React.FC<DemoViewProps> = ({ record }) => {
   const [inquiryPhone, setInquiryPhone] = useState('');
   const [inquiryMsg, setInquiryMsg] = useState('');
   const [inquirySubmitted, setInquirySubmitted] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && record) {
+      try {
+        const id = record.id || record.leadId;
+        if (id) {
+          localStorage.setItem(`outreachly_demo_${id}`, JSON.stringify(record));
+        }
+        if (record.slug) {
+          localStorage.setItem(`outreachly_demo_${record.slug}`, JSON.stringify(record));
+        }
+        if (record.business) {
+          const bizId = record.business.id || record.business.external_id;
+          if (bizId) {
+            localStorage.setItem(`outreachly_biz_${bizId}`, JSON.stringify(record.business));
+          }
+        }
+      } catch {
+        // ignore storage quota errors
+      }
+    }
+  }, [record]);
 
   const cleanPhone = normalizeWhatsAppNumber(business.phone || '');
   const displayPhone = formatDisplayPhone(business.phone || '');
