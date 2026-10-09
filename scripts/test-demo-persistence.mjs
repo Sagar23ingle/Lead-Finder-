@@ -135,3 +135,40 @@ test('6. Absolute and Relative Demo URL Construction', () => {
   const absoluteUrl = buildDemoUrl(biz, { origin: 'https://outreachly.ai' });
   assert.ok(absoluteUrl.startsWith('https://outreachly.ai/demo/coffee-haven--demo_123?d='));
 });
+
+test('7. Demo Scrolling Architecture and Viewport Verification', async () => {
+  const fs = await import('node:fs');
+  const path = await import('node:path');
+  const cssPath = path.resolve('src/app/globals.css');
+  const cssContent = fs.readFileSync(cssPath, 'utf8');
+
+  // Verify that root html and body are NOT globally hard-locked to overflow: hidden
+  assert.ok(
+    !cssContent.includes('html, body {\n  height: 100%;\n  width: 100%;\n  margin: 0;\n  padding: 0;\n  overflow: hidden;'),
+    'Global html, body must not be unconditionally hard-locked with overflow: hidden'
+  );
+
+  // Verify that smooth scrolling, scroll padding, and touch scrolling are configured on html
+  assert.ok(cssContent.includes('overflow-y: auto;'), 'Root must allow overflow-y: auto');
+  assert.ok(cssContent.includes('scroll-behavior: smooth;'), 'Root must have smooth scrolling');
+  assert.ok(cssContent.includes('scroll-padding-top:'), 'Root must have scroll-padding-top for sticky nav');
+
+  // Verify that dashboard container isolation is scoped via :has(.outreachly-app-root)
+  assert.ok(
+    cssContent.includes('html:has(.outreachly-app-root)') &&
+    cssContent.includes('body:has(.outreachly-app-root)'),
+    'Dashboard lock must be scoped to .outreachly-app-root'
+  );
+
+  // Verify that demo pages are unlocked via .outreachly-demo-page / .outreachly-demo-root
+  assert.ok(
+    cssContent.includes('.outreachly-demo-page') &&
+    cssContent.includes('.outreachly-demo-root'),
+    'Demo pages must define dedicated scroll containers'
+  );
+  assert.ok(
+    cssContent.includes('height: auto !important;') &&
+    cssContent.includes('overflow-y: auto !important;'),
+    'Demo pages must explicitly override height and overflow-y'
+  );
+});
