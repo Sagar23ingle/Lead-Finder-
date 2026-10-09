@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Search, Loader2 } from 'lucide-react';
+import { Search, Loader2, Globe, MapPin, Briefcase, Users, AlertTriangle, Key } from 'lucide-react';
 
 interface SearchFormProps {
   onSearch: (params: { country: string; city: string; niche: string; limit: 10 | 25 | 50 | 100 }) => Promise<void>;
   isLoading: boolean;
   isApiConfigured: boolean;
+  onOpenApiKeyModal?: () => void;
 }
 
 const COUNTRIES = [
@@ -35,6 +36,7 @@ export const SearchForm: React.FC<SearchFormProps> = ({
   onSearch,
   isLoading,
   isApiConfigured,
+  onOpenApiKeyModal,
 }) => {
   const [country, setCountry] = useState('India');
   const [city, setCity] = useState('');
@@ -61,17 +63,43 @@ export const SearchForm: React.FC<SearchFormProps> = ({
   return (
     <div className="search-card">
       <div className="search-header">
-        <h2 className="search-title">Discover Business Leads</h2>
+        <h2 className="search-title font-bodoni">Discover Business Leads</h2>
         <p className="search-subtitle">
           Query live businesses using official Google Places discovery with automatic deduplication.
         </p>
       </div>
 
+      {!isApiConfigured && (
+        <div className="search-api-warning-glass" role="alert">
+          <div className="search-api-warning-content">
+            <AlertTriangle size={16} className="text-amber" style={{ flexShrink: 0 }} />
+            <div>
+              <span className="search-api-warning-title">Places API is not configured on the server.</span>
+              <span className="search-api-warning-desc"> Searches will fail until an API key is provided.</span>
+            </div>
+          </div>
+          {onOpenApiKeyModal && (
+            <button
+              type="button"
+              onClick={onOpenApiKeyModal}
+              className="btn-ghost-sm"
+              style={{ color: '#fbbf24', borderColor: 'rgba(251, 191, 36, 0.35)', marginLeft: 'auto' }}
+            >
+              <Key size={13} />
+              <span>Add Session Key</span>
+            </button>
+          )}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit}>
         <div className="form-grid">
           {/* Country Selector */}
           <div className="form-group">
-            <label className="form-label" htmlFor="country-select">Country</label>
+            <label className="form-label" htmlFor="country-select">
+              <Globe size={13} className="text-cyan" />
+              <span>Country</span>
+            </label>
             <select
               id="country-select"
               className="form-select"
@@ -89,7 +117,10 @@ export const SearchForm: React.FC<SearchFormProps> = ({
 
           {/* City Input */}
           <div className="form-group">
-            <label className="form-label" htmlFor="city-input">State / City / Location</label>
+            <label className="form-label" htmlFor="city-input">
+              <MapPin size={13} className="text-cyan" />
+              <span>State / City / Location</span>
+            </label>
             <input
               id="city-input"
               type="text"
@@ -104,7 +135,10 @@ export const SearchForm: React.FC<SearchFormProps> = ({
 
           {/* Business Niche Input */}
           <div className="form-group">
-            <label className="form-label" htmlFor="niche-input">Business Niche</label>
+            <label className="form-label" htmlFor="niche-input">
+              <Briefcase size={13} className="text-cyan" />
+              <span>Business Niche</span>
+            </label>
             <input
               id="niche-input"
               type="text"
@@ -119,7 +153,10 @@ export const SearchForm: React.FC<SearchFormProps> = ({
 
           {/* Leads Limit Selector */}
           <div className="form-group">
-            <label className="form-label">Number of Leads</label>
+            <label className="form-label">
+              <Users size={13} className="text-cyan" />
+              <span>Number of Leads</span>
+            </label>
             <div className="limit-pills" role="radiogroup" aria-label="Number of leads required">
               {([10, 25, 50, 100] as const).map((num) => (
                 <button
@@ -145,7 +182,7 @@ export const SearchForm: React.FC<SearchFormProps> = ({
             <button
               key={item}
               type="button"
-              className="quick-chip"
+              className={`quick-chip ${niche === item ? 'active' : ''}`}
               onClick={() => setNiche(item)}
               disabled={isLoading}
             >

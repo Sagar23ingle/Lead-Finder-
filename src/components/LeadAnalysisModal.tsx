@@ -114,49 +114,17 @@ export const LeadAnalysisModal: React.FC<LeadAnalysisModalProps> = ({
   };
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.75)',
-        backdropFilter: 'blur(6px)',
-        zIndex: 1000,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '1.5rem',
-      }}
-      onClick={onClose}
-    >
+    <div className="modal-backdrop" onClick={onClose} role="dialog" aria-modal="true">
       <div
-        style={{
-          backgroundColor: '#0f172a',
-          border: '1px solid #1e293b',
-          borderRadius: '16px',
-          width: '100%',
-          maxWidth: '860px',
-          maxHeight: '90vh',
-          display: 'flex',
-          flexDirection: 'column',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7)',
-          overflow: 'hidden',
-        }}
+        className="modal-container"
+        style={{ maxWidth: '880px', maxHeight: '90vh' }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div
-          style={{
-            padding: '1.25rem 1.75rem',
-            borderBottom: '1px solid #1e293b',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            backgroundColor: '#111827',
-          }}
-        >
+        <div className="modal-header">
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#f8fafc' }}>{business.name}</h2>
+              <h2 className="modal-title font-bodoni">{business.name}</h2>
               {analysis && (
                 <span
                   style={{
@@ -193,7 +161,7 @@ export const LeadAnalysisModal: React.FC<LeadAnalysisModalProps> = ({
                 </span>
               )}
             </div>
-            <div style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '2px' }}>
+            <div className="modal-subtitle">
               {business.category || 'Local Business'} • {business.city}, {business.country}
             </div>
           </div>
@@ -201,13 +169,8 @@ export const LeadAnalysisModal: React.FC<LeadAnalysisModalProps> = ({
           <button
             onClick={onClose}
             type="button"
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: '#94a3b8',
-              cursor: 'pointer',
-              padding: '6px',
-            }}
+            className="modal-close-btn"
+            aria-label="Close modal"
           >
             <X size={20} />
           </button>

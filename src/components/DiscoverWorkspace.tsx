@@ -24,6 +24,8 @@ interface DiscoverWorkspaceProps {
   errorMessage: string | null;
   leadsFound: number;
   onViewLeads: () => void;
+  onOpenApiKeyModal?: () => void;
+  onOpenSettings?: () => void;
 }
 
 export const DiscoverWorkspace: React.FC<DiscoverWorkspaceProps> = ({
@@ -39,6 +41,8 @@ export const DiscoverWorkspace: React.FC<DiscoverWorkspaceProps> = ({
   errorMessage,
   leadsFound,
   onViewLeads,
+  onOpenApiKeyModal,
+  onOpenSettings,
 }) => {
   const [activeSubTab, setActiveSubTab] = useState<'new' | 'saved'>('new');
 
@@ -113,6 +117,7 @@ export const DiscoverWorkspace: React.FC<DiscoverWorkspaceProps> = ({
               onSearch={onSearch}
               isLoading={isLoading}
               isApiConfigured={isApiConfigured}
+              onOpenApiKeyModal={onOpenApiKeyModal}
             />
           </div>
 

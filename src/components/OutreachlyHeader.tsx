@@ -8,14 +8,24 @@ interface OutreachlyHeaderProps {
   configStatus: AppConfigStatus | null;
   onOpenSettings: () => void;
   onOpenQuickSearch?: () => void;
+  onOpenApiKeyModal?: () => void;
 }
 
 export const OutreachlyHeader: React.FC<OutreachlyHeaderProps> = ({
   configStatus,
   onOpenSettings,
   onOpenQuickSearch,
+  onOpenApiKeyModal,
 }) => {
   const isPlacesReady = configStatus?.googlePlacesConfigured ?? false;
+
+  const handleStatusClick = () => {
+    if (!isPlacesReady && onOpenApiKeyModal) {
+      onOpenApiKeyModal();
+    } else {
+      onOpenSettings();
+    }
+  };
 
   return (
     <header className="outreachly-header" role="banner">
@@ -30,15 +40,15 @@ export const OutreachlyHeader: React.FC<OutreachlyHeaderProps> = ({
       </div>
 
       <div className="header-actions-container">
-        {/* Understated API status indicator button that opens settings */}
+        {/* Understated API status indicator button that opens API key modal or settings */}
         <button
           type="button"
-          onClick={onOpenSettings}
+          onClick={handleStatusClick}
           className={`header-status-btn ${isPlacesReady ? 'ready' : 'unconfigured'}`}
           title={
             isPlacesReady
               ? 'Places API is active. Click to view configuration.'
-              : 'Places API key required. Click to configure.'
+              : 'Places API key required. Click to configure key.'
           }
           aria-label="API Integration Settings"
         >

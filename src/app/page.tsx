@@ -482,6 +482,7 @@ export default function OutreachlyPage() {
           configStatus={configStatus}
           onOpenSettings={() => setActiveTab('settings')}
           onOpenQuickSearch={() => setActiveTab('discover')}
+          onOpenApiKeyModal={() => setIsApiKeyModalOpen(true)}
         />
 
         {/* Main Content Workspace */}
@@ -520,6 +521,8 @@ export default function OutreachlyPage() {
               errorMessage={errorMessage}
               leadsFound={businesses.length}
               onViewLeads={() => setActiveTab('leads')}
+              onOpenApiKeyModal={() => setIsApiKeyModalOpen(true)}
+              onOpenSettings={() => setActiveTab('settings')}
             />
           )}
 
