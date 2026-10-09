@@ -26,7 +26,6 @@ export const OutreachlyHeader: React.FC<OutreachlyHeaderProps> = ({
       onOpenSettings();
     }
   };
-
   return (
     <header className="outreachly-header" role="banner">
       <div className="header-brand-container">

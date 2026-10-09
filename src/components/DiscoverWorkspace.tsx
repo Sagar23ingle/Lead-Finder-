@@ -43,6 +43,7 @@ export const DiscoverWorkspace: React.FC<DiscoverWorkspaceProps> = ({
   onViewLeads,
   onOpenApiKeyModal,
   onOpenSettings,
+
 }) => {
   const [activeSubTab, setActiveSubTab] = useState<'new' | 'saved'>('new');
 
