@@ -65,12 +65,25 @@
   padding: 0;
 }
 
-html, body {
-  height: 100%;
+html {
+  min-height: 100%;
   width: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  scroll-padding-top: 64px;
+  -webkit-overflow-scrolling: touch;
+}
+
+body {
+  min-height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
   background-color: var(--bg-canvas);
   background-image: 
     radial-gradient(ellipse 80% 50% at 50% -10%, rgba(124, 58, 237, 0.16) 0%, transparent 60%),
@@ -80,6 +93,33 @@ html, body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Specific lock for the dashboard SPA so window scrollbars never appear while inside Outreachly dashboard */
+html:has(.outreachly-app-root),
+body:has(.outreachly-app-root) {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Explicit full vertical scrolling for generated website demos */
+.outreachly-demo-page,
+.outreachly-demo-root {
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: visible;
+  position: relative;
+}
+
+html:has(.outreachly-demo-page),
+body:has(.outreachly-demo-page),
+html:has(.outreachly-demo-root),
+body:has(.outreachly-demo-root) {
+  height: auto !important;
+  min-height: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
 }
 
 a {

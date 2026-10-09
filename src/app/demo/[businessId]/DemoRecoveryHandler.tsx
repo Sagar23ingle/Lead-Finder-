@@ -245,6 +245,7 @@ export const DemoRecoveryHandler: React.FC<DemoRecoveryHandlerProps> = ({ busine
   if (isRecovering) {
     return (
       <div
+        className="outreachly-demo-page"
         style={{
           minHeight: '100vh',
           backgroundColor: '#0a0b10',
@@ -312,6 +313,7 @@ export const DemoRecoveryHandler: React.FC<DemoRecoveryHandlerProps> = ({ busine
 
   return (
     <div
+      className="outreachly-demo-page"
       style={{
         minHeight: '100vh',
         backgroundColor: '#0a0b10',

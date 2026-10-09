@@ -60,6 +60,30 @@ export const DemoView: React.FC<DemoViewProps> = ({ record }) => {
     }
   }, [record]);
 
+  // Unlock document and body scrolling so demo website scrolls naturally
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      const prevHtmlOverflow = document.documentElement.style.overflow;
+      const prevHtmlHeight = document.documentElement.style.height;
+      const prevBodyOverflow = document.body.style.overflow;
+      const prevBodyHeight = document.body.style.height;
+
+      document.documentElement.style.overflowY = 'auto';
+      document.documentElement.style.overflowX = 'hidden';
+      document.documentElement.style.height = 'auto';
+      document.body.style.overflowY = 'auto';
+      document.body.style.overflowX = 'hidden';
+      document.body.style.height = 'auto';
+
+      return () => {
+        document.documentElement.style.overflow = prevHtmlOverflow;
+        document.documentElement.style.height = prevHtmlHeight;
+        document.body.style.overflow = prevBodyOverflow;
+        document.body.style.height = prevBodyHeight;
+      };
+    }
+  }, []);
+
   const cleanPhone = normalizeWhatsAppNumber(business.phone || '');
   const displayPhone = formatDisplayPhone(business.phone || '');
 
@@ -99,12 +123,16 @@ export const DemoView: React.FC<DemoViewProps> = ({ record }) => {
 
   return (
     <div
+      className="outreachly-demo-page"
       style={{
         backgroundColor: theme.background,
         color: theme.textPrimary,
         minHeight: '100vh',
+        width: '100%',
         fontFamily: theme.fontBody,
         overflowX: 'hidden',
+        overflowY: 'visible',
+        position: 'relative',
       }}
     >
       {/* ====================================================================
