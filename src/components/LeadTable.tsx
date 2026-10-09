@@ -757,19 +757,22 @@ export const LeadTable: React.FC<LeadTableProps> = ({
       {totalPages > 1 && (
         <div
           style={{
-            padding: '10px 16px',
-            backgroundColor: '#1e293b',
-            borderTop: '1px solid #334155',
+            padding: '10px 18px',
+            backgroundColor: 'rgba(12, 16, 26, 0.75)',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
+            borderTop: '1px solid var(--border-glass)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             flexWrap: 'wrap',
             gap: '10px',
+            flexShrink: 0,
           }}
         >
-          <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>
-            Showing <strong>{startIndex + 1}</strong>–<strong>{Math.min(startIndex + pageSize, businesses.length)}</strong> of{' '}
-            <strong>{businesses.length}</strong> leads
+          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+            Showing <strong style={{ color: '#fff' }}>{startIndex + 1}</strong>–<strong style={{ color: '#fff' }}>{Math.min(startIndex + pageSize, businesses.length)}</strong> of{' '}
+            <strong style={{ color: '#fff' }}>{businesses.length}</strong> leads
           </span>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -781,21 +784,23 @@ export const LeadTable: React.FC<LeadTableProps> = ({
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '4px',
-                padding: '4px 10px',
-                borderRadius: '6px',
-                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                color: currentPage === 1 ? '#64748b' : '#f8fafc',
+                padding: '5px 12px',
+                borderRadius: '8px',
+                backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid var(--border-glass)',
+                color: currentPage === 1 ? 'var(--text-dim)' : 'var(--text-primary)',
                 fontSize: '0.78rem',
+                fontWeight: 600,
                 cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                transition: 'all 0.15s ease',
               }}
             >
               <ChevronLeft size={13} />
               <span>Prev</span>
             </button>
 
-            <span style={{ fontSize: '0.78rem', color: '#cbd5e1', padding: '0 6px' }}>
-              Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
+            <span style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', padding: '0 6px' }}>
+              Page <strong style={{ color: '#fff' }}>{currentPage}</strong> of <strong style={{ color: '#fff' }}>{totalPages}</strong>
             </span>
 
             <button
@@ -806,13 +811,15 @@ export const LeadTable: React.FC<LeadTableProps> = ({
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '4px',
-                padding: '4px 10px',
-                borderRadius: '6px',
-                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(255, 255, 255, 0.15)',
-                color: currentPage === totalPages ? '#64748b' : '#f8fafc',
+                padding: '5px 12px',
+                borderRadius: '8px',
+                backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid var(--border-glass)',
+                color: currentPage === totalPages ? 'var(--text-dim)' : 'var(--text-primary)',
                 fontSize: '0.78rem',
+                fontWeight: 600,
                 cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+                transition: 'all 0.15s ease',
               }}
             >
               <span>Next</span>

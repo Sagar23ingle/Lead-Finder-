@@ -356,19 +356,10 @@ export const OutreachCenterModal: React.FC<Props> = ({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Top Bar */}
-        <div
-          style={{
-            padding: '16px 24px',
-            borderBottom: '1px solid var(--border-color, #334155)',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            backgroundColor: 'var(--card-bg, #1e293b)',
-          }}
-        >
+        <div className="modal-header">
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <h2 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
+              <h2 className="modal-title font-bodoni">
                 {business.name}
               </h2>
               {analysis && (
@@ -396,7 +387,7 @@ export const OutreachCenterModal: React.FC<Props> = ({
                 </span>
               )}
             </div>
-            <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+            <p className="modal-subtitle">
               {business.category} • {business.city || 'Location unavailable'} •{' '}
               {business.review_count} Google Reviews ({business.rating || 0}★)
             </p>
@@ -407,15 +398,12 @@ export const OutreachCenterModal: React.FC<Props> = ({
             <select
               value={crmRecord.stage}
               onChange={(e) => handleUpdateStage(e.target.value as PipelineStage)}
+              className="form-select"
               style={{
-                backgroundColor: 'rgba(15, 23, 42, 0.8)',
-                color: 'var(--text-primary)',
-                border: '1px solid var(--border-color)',
-                borderRadius: '6px',
-                padding: '6px 12px',
-                fontSize: '0.85rem',
+                height: '36px',
+                padding: '0 28px 0 10px',
+                fontSize: '0.825rem',
                 fontWeight: 600,
-                cursor: 'pointer',
               }}
             >
               {PIPELINE_STAGES.map((s) => (
@@ -427,13 +415,8 @@ export const OutreachCenterModal: React.FC<Props> = ({
 
             <button
               onClick={onClose}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: 'var(--text-secondary)',
-                cursor: 'pointer',
-                padding: '4px',
-              }}
+              className="modal-close-btn"
+              aria-label="Close dialog"
             >
               <X size={20} />
             </button>

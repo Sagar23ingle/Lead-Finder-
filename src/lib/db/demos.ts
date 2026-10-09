@@ -30,10 +30,61 @@ export function generateDemoSlug(businessName: string, id: string): string {
     .replace(/^-+|-+$/g, '')
     .slice(0, 40);
 
-  // Take the end or unique identifier
-  const shortId = id.length > 20 ? id.slice(-12) : id;
-  const cleanId = shortId.replace(/[^a-zA-Z0-9_-]/g, '');
-  return `${cleanName}-${cleanId}`.toLowerCase();
+  const cleanId = (id || 'demo').replace(/[^a-zA-Z0-9_-]/g, '');
+  return `${cleanName}--${cleanId}`;
+}
+
+export function encodeCompactBusiness(b: Business): string {
+  try {
+    const compact = {
+      id: b.id || b.external_id,
+      name: b.name || b.businessName,
+      category: b.category,
+      address: b.address,
+      city: b.city,
+      country: b.country,
+      phone: b.phone,
+      website: b.website,
+      rating: b.rating,
+      reviewCount: b.reviewCount || b.review_count,
+      googleMapsUrl: b.googleMapsUrl || b.google_maps_url,
+      openingStatus: b.opening_status || (b as any).openingStatus || 'Open Now',
+    };
+    return Buffer.from(JSON.stringify(compact), 'utf8').toString('base64url');
+  } catch {
+    return '';
+  }
+}
+
+export function decodeCompactBusiness(encoded: string): Business | null {
+  try {
+    if (!encoded) return null;
+    const json = Buffer.from(encoded, 'base64url').toString('utf8');
+    const b = JSON.parse(json);
+    if (!b || !b.name) return null;
+    return {
+      id: b.id || 'demo',
+      external_id: b.id || 'demo',
+      placeId: b.id || 'demo',
+      name: b.name,
+      businessName: b.name,
+      category: b.category || 'Local Business',
+      address: b.address || '',
+      city: b.city || '',
+      country: b.country || '',
+      phone: b.phone || '',
+      website: b.website || null,
+      google_maps_url: b.googleMapsUrl || null,
+      googleMapsUrl: b.googleMapsUrl || null,
+      rating: b.rating || 4.5,
+      review_count: b.reviewCount || 10,
+      reviewCount: b.reviewCount || 10,
+      opening_status: b.openingStatus || 'Open Now',
+      source: 'google_places',
+    } as Business;
+  } catch {
+    return null;
+  }
 }
 
 /**

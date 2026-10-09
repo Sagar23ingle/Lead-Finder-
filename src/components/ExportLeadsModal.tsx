@@ -65,52 +65,20 @@ export const ExportLeadsModal: React.FC<ExportLeadsModalProps> = ({
   };
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        backgroundColor: 'rgba(5, 8, 17, 0.75)',
-        backdropFilter: 'blur(8px)',
-        zIndex: 1000,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '1rem',
-      }}
-      onClick={onClose}
-    >
+    <div className="modal-backdrop" onClick={onClose} role="dialog" aria-modal="true">
       <div
-        style={{
-          backgroundColor: '#0f172a',
-          border: '1px solid #334155',
-          borderRadius: '14px',
-          width: '100%',
-          maxWidth: '560px',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7)',
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column',
-          animation: 'modalSlideUp 0.2s ease-out',
-        }}
+        className="modal-container"
+        style={{ maxWidth: '560px' }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div
-          style={{
-            padding: '1.25rem 1.5rem',
-            borderBottom: '1px solid #1e293b',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            background: 'linear-gradient(to right, #0f172a, #1e293b)',
-          }}
-        >
+        <div className="modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div
               style={{
                 width: '36px',
                 height: '36px',
-                borderRadius: '8px',
+                borderRadius: '10px',
                 backgroundColor: 'rgba(16, 185, 129, 0.15)',
                 border: '1px solid rgba(16, 185, 129, 0.3)',
                 display: 'flex',
@@ -122,10 +90,10 @@ export const ExportLeadsModal: React.FC<ExportLeadsModalProps> = ({
               <FileSpreadsheet size={18} />
             </div>
             <div>
-              <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 600, color: '#f8fafc' }}>
+              <h3 className="modal-title font-bodoni">
                 Export Leads to Spreadsheet
               </h3>
-              <p style={{ margin: '2px 0 0 0', fontSize: '0.78rem', color: '#94a3b8' }}>
+              <p className="modal-subtitle">
                 Exporting {count} verified business leads with AI opportunity audits
               </p>
             </div>
@@ -134,24 +102,15 @@ export const ExportLeadsModal: React.FC<ExportLeadsModalProps> = ({
           <button
             onClick={onClose}
             type="button"
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: '#94a3b8',
-              cursor: 'pointer',
-              padding: '6px',
-              borderRadius: '6px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
+            className="modal-close-btn"
+            aria-label="Close dialog"
           >
             <X size={18} />
           </button>
         </div>
 
         {/* Content Body */}
-        <div style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <div className="modal-body">
           {/* Option 1: Microsoft Excel */}
           <div
             style={{
@@ -320,28 +279,12 @@ export const ExportLeadsModal: React.FC<ExportLeadsModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div
-          style={{
-            padding: '0.85rem 1.5rem',
-            borderTop: '1px solid #1e293b',
-            display: 'flex',
-            justifyContent: 'flex-end',
-            backgroundColor: '#0f172a',
-          }}
-        >
+        <div className="modal-footer" style={{ justifyContent: 'flex-end' }}>
           <button
             onClick={onClose}
             type="button"
-            style={{
-              backgroundColor: '#334155',
-              color: '#f8fafc',
-              border: 'none',
-              padding: '6px 16px',
-              borderRadius: '6px',
-              fontSize: '0.82rem',
-              fontWeight: 500,
-              cursor: 'pointer',
-            }}
+            className="btn-secondary"
+            style={{ padding: '7px 18px', fontSize: '0.825rem' }}
           >
             Close
           </button>
