@@ -99,6 +99,7 @@ export const MacDock: React.FC<MacDockProps> = ({
               className="mac-dock-item-wrapper"
               onMouseEnter={() => setHoveredTab(item.id)}
               onMouseLeave={() => setHoveredTab(null)}
+              onTouchStart={() => setHoveredTab(null)}
             >
               {/* Tooltip Label */}
               <div
@@ -112,7 +113,10 @@ export const MacDock: React.FC<MacDockProps> = ({
               {/* Dock Icon Button */}
               <button
                 type="button"
-                onClick={() => onSelectTab(item.id)}
+                onClick={() => {
+                  setHoveredTab(null);
+                  onSelectTab(item.id);
+                }}
                 className={`mac-dock-btn ${isActive ? 'active' : ''} ${
                   isHovered ? 'hovered' : ''
                 }`}

@@ -153,17 +153,17 @@ export const LeadTable: React.FC<LeadTableProps> = ({
 
   return (
     <div className="table-wrapper">
-      {/* Batch Analysis Bar */}
+      {/* Batch Analysis & Export Toolbar */}
       <div
         style={{
-          padding: '0.65rem 1rem',
-          backgroundColor: '#1e293b',
-          borderBottom: '1px solid #334155',
+          padding: '0.75rem 1rem',
+          backgroundColor: 'rgba(15, 23, 42, 0.75)',
+          borderBottom: '1px solid var(--border-glass)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           flexWrap: 'wrap',
-          gap: '0.5rem',
+          gap: '0.65rem',
         }}
       >
         <div style={{ fontSize: '0.85rem', color: '#cbd5e1', fontWeight: 600 }}>
@@ -175,7 +175,7 @@ export const LeadTable: React.FC<LeadTableProps> = ({
           )}
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap' }}>
           {unanalyzedCount > 0 && (
             <button
               onClick={onAnalyzeAll}
@@ -185,14 +185,15 @@ export const LeadTable: React.FC<LeadTableProps> = ({
                 backgroundColor: 'rgba(37, 99, 235, 0.15)',
                 border: '1px solid rgba(59, 130, 246, 0.4)',
                 color: '#60a5fa',
-                padding: '4px 10px',
+                padding: '6px 10px',
                 borderRadius: '6px',
                 fontSize: '0.78rem',
                 fontWeight: 600,
-                cursor: 'pointer',
+                cursor: isBatchAnalyzing ? 'not-allowed' : 'pointer',
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '4px',
+                minHeight: '34px',
               }}
             >
               <Sparkles size={12} />
@@ -219,7 +220,7 @@ export const LeadTable: React.FC<LeadTableProps> = ({
                   backgroundColor: 'rgba(16, 185, 129, 0.12)',
                   border: '1px solid rgba(16, 185, 129, 0.35)',
                   color: '#34d399',
-                  padding: '4px 9px',
+                  padding: '6px 10px',
                   borderRadius: '6px',
                   fontSize: '0.78rem',
                   fontWeight: 600,
@@ -227,6 +228,7 @@ export const LeadTable: React.FC<LeadTableProps> = ({
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '4px',
+                  minHeight: '34px',
                 }}
               >
                 {quickDownloadedExcel ? <Check size={12} /> : <FileSpreadsheet size={12} />}
@@ -248,7 +250,7 @@ export const LeadTable: React.FC<LeadTableProps> = ({
                   backgroundColor: 'rgba(14, 165, 233, 0.12)',
                   border: '1px solid rgba(14, 165, 233, 0.35)',
                   color: '#38bdf8',
-                  padding: '4px 9px',
+                  padding: '6px 10px',
                   borderRadius: '6px',
                   fontSize: '0.78rem',
                   fontWeight: 600,
@@ -256,6 +258,7 @@ export const LeadTable: React.FC<LeadTableProps> = ({
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '4px',
+                  minHeight: '34px',
                 }}
               >
                 {quickCopiedSheets ? <Check size={12} /> : <Copy size={12} />}
@@ -270,7 +273,7 @@ export const LeadTable: React.FC<LeadTableProps> = ({
                   backgroundColor: 'rgba(255, 255, 255, 0.05)',
                   border: '1px solid rgba(255, 255, 255, 0.15)',
                   color: '#cbd5e1',
-                  padding: '4px 8px',
+                  padding: '6px 9px',
                   borderRadius: '6px',
                   fontSize: '0.78rem',
                   fontWeight: 500,
@@ -278,6 +281,7 @@ export const LeadTable: React.FC<LeadTableProps> = ({
                   display: 'inline-flex',
                   alignItems: 'center',
                   gap: '4px',
+                  minHeight: '34px',
                 }}
               >
                 <Download size={12} />
@@ -580,20 +584,23 @@ export const LeadTable: React.FC<LeadTableProps> = ({
         {paginatedBusinesses.map((business) => {
           const analysis = analyses[business.id] || analyses[business.external_id];
           const crmRecord = crmRecords[business.id || business.external_id];
+          const cleanPhone = business.phone ? normalizeWhatsAppNumber(business.phone) : null;
+          const displayPhone = business.phone ? formatDisplayPhone(business.phone) : null;
 
           return (
             <div key={business.external_id || business.id} className="mobile-lead-card">
-              {/* Row 1: Title & Rating */}
+              {/* Header: Title, Rating, and Map Pin */}
               <div className="mobile-card-title-row">
                 <button
                   onClick={() => onSelectLead(business)}
                   type="button"
                   className="mobile-card-title-btn"
+                  title="View AI Analysis & Opportunity Report"
                 >
                   {business.name}
                 </button>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
                   {business.rating ? (
                     <span className="rating-badge" style={{ fontSize: '0.8rem' }}>
                       <Star size={11} fill="currentColor" />
@@ -602,7 +609,9 @@ export const LeadTable: React.FC<LeadTableProps> = ({
                         ({business.review_count || 0})
                       </span>
                     </span>
-                  ) : null}
+                  ) : (
+                    <span style={{ color: 'var(--text-muted)', fontSize: '0.72rem' }}>Unrated</span>
+                  )}
 
                   {business.google_maps_url && (
                     <a
@@ -611,26 +620,108 @@ export const LeadTable: React.FC<LeadTableProps> = ({
                       rel="noopener noreferrer"
                       className="mobile-card-map-btn"
                       title="Open Google Maps"
+                      aria-label="View on Google Maps"
                     >
-                      <MapPin size={13} />
+                      <MapPin size={14} />
                     </a>
                   )}
                 </div>
               </div>
 
-              {/* Row 2: Category, City, & Status */}
+              {/* Meta row: Category, City, Opening Status */}
               <div className="mobile-card-badges-row">
                 <span className="category-tag">{business.category || 'Business'}</span>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
                   {business.city || 'Local Area'}
                 </span>
 
-                {crmRecord && (
+                {business.opening_status && (
+                  <span
+                    style={{
+                      fontSize: '0.7rem',
+                      fontWeight: 600,
+                      color: business.opening_status.includes('Open')
+                        ? 'var(--accent-emerald)'
+                        : 'var(--accent-rose)',
+                    }}
+                  >
+                    ● {business.opening_status}
+                  </span>
+                )}
+              </div>
+
+              {/* Status Row: Score & Qualification Tier, CRM Stage, Website Status */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                {analysis ? (
+                  <button
+                    onClick={() => onSelectLead(business)}
+                    type="button"
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      padding: 0,
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: '0.68rem',
+                        fontWeight: 700,
+                        padding: '2px 7px',
+                        borderRadius: '4px',
+                        backgroundColor:
+                          analysis.tier === 'HOT'
+                            ? 'rgba(239, 68, 68, 0.2)'
+                            : analysis.tier === 'WARM'
+                            ? 'rgba(245, 158, 11, 0.2)'
+                            : 'rgba(100, 116, 139, 0.2)',
+                        color:
+                          analysis.tier === 'HOT'
+                            ? '#f87171'
+                            : analysis.tier === 'WARM'
+                            ? '#fbbf24'
+                            : '#94a3b8',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '3px',
+                      }}
+                    >
+                      {analysis.tier === 'HOT' && <Flame size={10} />}
+                      <span>{analysis.tier} • {analysis.score}/100</span>
+                    </span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => onSelectLead(business)}
+                    type="button"
+                    style={{
+                      fontSize: '0.68rem',
+                      fontWeight: 600,
+                      padding: '2px 6px',
+                      borderRadius: '4px',
+                      backgroundColor: 'rgba(59, 130, 246, 0.15)',
+                      color: '#60a5fa',
+                      border: '1px solid rgba(59, 130, 246, 0.3)',
+                      cursor: 'pointer',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '3px',
+                    }}
+                  >
+                    <Sparkles size={10} />
+                    <span>Audit Pending</span>
+                  </button>
+                )}
+
+                {crmRecord ? (
                   <span
                     style={{
                       fontSize: '0.65rem',
                       fontWeight: 700,
-                      padding: '1px 5px',
+                      padding: '2px 6px',
                       borderRadius: '4px',
                       backgroundColor: 'rgba(139, 92, 246, 0.15)',
                       color: '#a78bfa',
@@ -640,94 +731,87 @@ export const LeadTable: React.FC<LeadTableProps> = ({
                   >
                     {crmRecord.stage}
                   </span>
+                ) : (
+                  <span style={{ color: 'var(--text-muted)', fontSize: '0.7rem' }}>STAGE: NEW</span>
                 )}
-
-                {analysis && (
-                  <span
-                    style={{
-                      fontSize: '0.68rem',
-                      fontWeight: 700,
-                      padding: '1px 6px',
-                      borderRadius: '4px',
-                      backgroundColor:
-                        analysis.tier === 'HOT'
-                          ? 'rgba(239, 68, 68, 0.2)'
-                          : analysis.tier === 'WARM'
-                          ? 'rgba(245, 158, 11, 0.2)'
-                          : 'rgba(100, 116, 139, 0.2)',
-                      color:
-                        analysis.tier === 'HOT'
-                          ? '#f87171'
-                          : analysis.tier === 'WARM'
-                          ? '#fbbf24'
-                          : '#94a3b8',
-                    }}
-                  >
-                    {analysis.tier} {analysis.score}
-                  </span>
-                )}
-              </div>
-
-              {/* Row 3: Action Buttons */}
-              <div className="mobile-card-actions" style={{ paddingTop: '8px', marginTop: '4px' }}>
-                <button
-                  onClick={() => onSelectLead(business)}
-                  type="button"
-                  className="mobile-action-btn audit"
-                  style={{ minHeight: '34px', padding: '6px 8px', fontSize: '0.78rem' }}
-                >
-                  <Sparkles size={12} />
-                  <span>Audit</span>
-                </button>
-
-                <Link
-                  href={buildDemoPath(business)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mobile-action-btn demo"
-                  style={{ minHeight: '34px', padding: '6px 12px', fontSize: '0.78rem' }}
-                >
-                  <Eye size={12} />
-                  <span>Demo</span>
-                </Link>
 
                 {business.website ? (
                   <a
                     href={business.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mobile-action-btn"
-                    style={{
-                      backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                      border: '1px solid rgba(37, 99, 235, 0.25)',
-                      color: '#93c5fd',
-                      minHeight: '34px',
-                      padding: '6px 8px',
-                      fontSize: '0.78rem',
-                    }}
+                    className="link-website"
+                    style={{ fontSize: '0.74rem' }}
+                    title={business.website}
                   >
-                    <ExternalLink size={11} />
-                    <span>Site</span>
+                    <span>Website</span>
+                    <ExternalLink size={10} />
                   </a>
                 ) : (
-                  <span
-                    style={{
-                      fontSize: '0.7rem',
-                      color: '#fca5a5',
-                      padding: '4px 6px',
-                      backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                      borderRadius: '4px',
-                      alignSelf: 'center',
-                    }}
-                  >
-                    No Site
+                  <span className="badge-no-website" style={{ fontSize: '0.68rem', padding: '1px 5px' }}>
+                    No Website
                   </span>
                 )}
+              </div>
 
-                {business.phone && normalizeWhatsAppNumber(business.phone) && (
+              {/* Verified Phone Row if Available */}
+              {displayPhone && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.76rem', color: 'var(--text-secondary)' }}>
+                  <Phone size={12} className="text-cyan" />
+                  <a href={`tel:${business.phone}`} style={{ color: '#93c5fd', textDecoration: 'none', fontWeight: 500 }}>
+                    {displayPhone}
+                  </a>
+                </div>
+              )}
+
+              {/* Action Buttons Row */}
+              <div className="mobile-card-actions">
+                {/* Audit Button */}
+                <button
+                  onClick={() => onSelectLead(business)}
+                  type="button"
+                  className="mobile-action-btn audit"
+                  title="View full AI audit and opportunity score"
+                >
+                  <Sparkles size={12} className="text-amber" />
+                  <span>Audit</span>
+                </button>
+
+                {/* Website Demo Preview Button */}
+                <Link
+                  href={buildDemoPath(business)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mobile-action-btn demo"
+                  title="View personalized client website demo"
+                >
+                  <Eye size={12} />
+                  <span>Demo</span>
+                </Link>
+
+                {/* Outreach / Pitch Button */}
+                {onOpenOutreach && (
+                  <button
+                    onClick={() => onOpenOutreach(business)}
+                    type="button"
+                    className="mobile-action-btn"
+                    style={{
+                      backgroundColor: 'rgba(139, 92, 246, 0.2)',
+                      border: '1px solid rgba(139, 92, 246, 0.4)',
+                      color: '#c4b5fd',
+                    }}
+                    title="Open Outreach Center to pitch client"
+                  >
+                    <Send size={12} />
+                    <span>Pitch</span>
+                  </button>
+                )}
+
+                {/* WhatsApp One-Click Action */}
+                {cleanPhone && (
                   <a
-                    href={`https://wa.me/${normalizeWhatsAppNumber(business.phone)}?text=${encodeURIComponent(
-                      `Hi ${business.name}, I came across your Google profile in ${business.city || 'your area'}.`
+                    href={`https://wa.me/${cleanPhone}?text=${encodeURIComponent(
+                      `Hi ${business.name}, I came across your Google business profile in ${business.city || 'your area'}.`
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
@@ -736,14 +820,11 @@ export const LeadTable: React.FC<LeadTableProps> = ({
                       backgroundColor: 'rgba(34, 197, 94, 0.15)',
                       border: '1px solid rgba(34, 197, 94, 0.35)',
                       color: '#4ade80',
-                      minHeight: '34px',
-                      padding: '6px 8px',
-                      fontSize: '0.78rem',
-                      flex: '0 0 auto',
                     }}
+                    title="Send WhatsApp message"
                   >
                     <MessageCircle size={12} />
-                    <span>WA</span>
+                    <span>WhatsApp</span>
                   </a>
                 )}
               </div>

@@ -192,7 +192,7 @@ export const SearchForm: React.FC<SearchFormProps> = ({
         </div>
 
         {/* Submit & Reset Buttons */}
-        <div className="form-actions" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+        <div className="form-actions">
           <button
             type="submit"
             className="btn-primary"
@@ -208,7 +208,6 @@ export const SearchForm: React.FC<SearchFormProps> = ({
               type="button"
               onClick={handleClear}
               className="btn-secondary"
-              style={{ padding: '9px 16px', fontSize: '0.85rem' }}
             >
               Clear Form
             </button>

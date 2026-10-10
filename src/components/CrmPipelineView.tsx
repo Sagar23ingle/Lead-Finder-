@@ -118,6 +118,7 @@ export const CrmPipelineView: React.FC<Props> = ({
     <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
       {/* Pipeline Toolbar */}
       <div
+        className="pipeline-toolbar-header"
         style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -126,7 +127,7 @@ export const CrmPipelineView: React.FC<Props> = ({
           gap: '12px',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
           <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 600, color: 'var(--text-primary)' }}>
             Agency Sales Pipeline Kanban
           </h3>
@@ -144,8 +145,8 @@ export const CrmPipelineView: React.FC<Props> = ({
         </div>
 
         {/* Search inside pipeline */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{ position: 'relative' }}>
+        <div className="pipeline-actions-group" style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          <div style={{ position: 'relative', flex: '1 1 180px', minWidth: 0 }}>
             <Search
               size={14}
               style={{
@@ -168,13 +169,14 @@ export const CrmPipelineView: React.FC<Props> = ({
                 borderRadius: '6px',
                 color: 'var(--text-primary)',
                 fontSize: '0.82rem',
-                width: '210px',
+                width: '100%',
+                boxSizing: 'border-box',
               }}
             />
           </div>
 
           {businesses.length > 0 && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
               <button
                 type="button"
                 onClick={() => {
@@ -235,11 +237,14 @@ export const CrmPipelineView: React.FC<Props> = ({
 
       {/* Columns Container (Horizontal Scroll) */}
       <div
+        className="pipeline-kanban-container"
         style={{
           display: 'flex',
           gap: '12px',
           overflowX: 'auto',
           paddingBottom: '16px',
+          maxWidth: '100%',
+          WebkitOverflowScrolling: 'touch',
         }}
       >
         {STAGES.map((s) => {

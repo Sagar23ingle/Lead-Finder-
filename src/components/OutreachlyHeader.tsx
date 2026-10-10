@@ -54,7 +54,8 @@ export const OutreachlyHeader: React.FC<OutreachlyHeaderProps> = ({
         >
           <span className={`status-pulse-dot ${isPlacesReady ? 'active' : ''}`} />
           <span className="status-btn-text">
-            {isPlacesReady ? 'Engine Ready' : 'Configure API'}
+            <span className="status-text-full">{isPlacesReady ? 'Engine Ready' : 'Configure API'}</span>
+            <span className="status-text-short">{isPlacesReady ? 'Ready' : 'API'}</span>
           </span>
         </button>
 

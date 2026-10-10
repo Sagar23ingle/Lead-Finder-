@@ -125,7 +125,7 @@ export const LeadAnalysisModal: React.FC<LeadAnalysisModalProps> = ({
         {/* Header */}
         <div className="modal-header">
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
               <h2 className="modal-title font-bodoni">{business.name}</h2>
               {analysis && (
                 <span
@@ -218,7 +218,7 @@ export const LeadAnalysisModal: React.FC<LeadAnalysisModalProps> = ({
         </div>
 
         {/* Content Body */}
-        <div style={{ padding: '1.75rem', overflowY: 'auto', flex: 1 }}>
+        <div className="modal-body" style={{ overflowY: 'auto', flex: 1 }}>
           {isLoading && !analysis ? (
             <div style={{ textAlign: 'center', padding: '3rem 0' }}>
               <div

@@ -123,8 +123,8 @@ export const ExportLeadsModal: React.FC<ExportLeadsModalProps> = ({
               gap: '0.75rem',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: '200px', flex: '1 1 auto' }}>
                 <span style={{ fontSize: '1.2rem' }}>📗</span>
                 <div>
                   <div style={{ fontWeight: 600, fontSize: '0.95rem', color: '#f8fafc' }}>
@@ -150,7 +150,9 @@ export const ExportLeadsModal: React.FC<ExportLeadsModalProps> = ({
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
+                  justifyContent: 'center',
                   gap: '6px',
+                  minHeight: '38px',
                   transition: 'background-color 0.2s ease',
                 }}
               >
@@ -172,8 +174,8 @@ export const ExportLeadsModal: React.FC<ExportLeadsModalProps> = ({
               gap: '0.75rem',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: '200px', flex: '1 1 auto' }}>
                 <span style={{ fontSize: '1.2rem' }}>📊</span>
                 <div>
                   <div style={{ fontWeight: 600, fontSize: '0.95rem', color: '#f8fafc' }}>
@@ -185,7 +187,7 @@ export const ExportLeadsModal: React.FC<ExportLeadsModalProps> = ({
                 </div>
               </div>
 
-              <div style={{ display: 'flex', gap: '8px' }}>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 <button
                   onClick={handleCopyForSheets}
                   type="button"
@@ -200,7 +202,9 @@ export const ExportLeadsModal: React.FC<ExportLeadsModalProps> = ({
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
+                    justifyContent: 'center',
                     gap: '5px',
+                    minHeight: '38px',
                   }}
                 >
                   {copiedSheets ? <Check size={14} /> : <Copy size={14} />}
@@ -222,7 +226,9 @@ export const ExportLeadsModal: React.FC<ExportLeadsModalProps> = ({
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'center',
+                    justifyContent: 'center',
                     gap: '4px',
+                    minHeight: '38px',
                   }}
                 >
                   <span>New Sheet</span>

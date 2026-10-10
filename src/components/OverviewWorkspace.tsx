@@ -197,13 +197,15 @@ export const OverviewWorkspace: React.FC<OverviewWorkspaceProps> = ({
                     <div className="lead-main-col">
                       <div className="lead-name-row">
                         <span className="lead-name">{b.name}</span>
-                        {isHot && (
-                          <span className="badge-hot">
-                            <Flame size={12} />
-                            <span>Hot</span>
-                          </span>
-                        )}
-                        {!b.website && <span className="badge-opportunity">No Website</span>}
+                        <div className="lead-badges-group">
+                          {isHot && (
+                            <span className="badge-hot">
+                              <Flame size={12} />
+                              <span>Hot</span>
+                            </span>
+                          )}
+                          {!b.website && <span className="badge-opportunity">No Website</span>}
+                        </div>
                       </div>
                       <div className="lead-meta-row">
                         {b.category && <span className="lead-meta-item">{b.category}</span>}

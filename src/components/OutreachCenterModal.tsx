@@ -359,7 +359,7 @@ export const OutreachCenterModal: React.FC<Props> = ({
         {/* Modal Top Bar */}
         <div className="modal-header">
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
               <h2 className="modal-title font-bodoni">
                 {business.name}
               </h2>
@@ -394,7 +394,7 @@ export const OutreachCenterModal: React.FC<Props> = ({
             </p>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
             {/* Stage Dropdown */}
             <select
               value={crmRecord.stage}

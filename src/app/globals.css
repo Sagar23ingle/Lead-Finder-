@@ -189,14 +189,16 @@ button, input, select, textarea {
   flex: 1;
   min-height: 0;
   height: calc(100vh - 64px);
+  height: calc(100dvh - 64px);
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 1.5rem 2rem 5.5rem 2rem;
+  padding: 1.5rem 2rem calc(6.5rem + env(safe-area-inset-bottom, 0px)) 2rem;
   max-width: 1560px;
   margin: 0 auto;
   width: 100%;
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.12) transparent;
+  -webkit-overflow-scrolling: touch;
 }
 
 .outreachly-main-content::-webkit-scrollbar {
@@ -317,6 +319,14 @@ button, input, select, textarea {
   color: inherit;
 }
 
+.status-text-full {
+  display: inline;
+}
+
+.status-text-short {
+  display: none;
+}
+
 .header-icon-btn {
   width: 36px;
   height: 36px;
@@ -342,13 +352,15 @@ button, input, select, textarea {
    ==================================================================== */
 .mac-dock-container {
   position: fixed;
-  bottom: 16px;
+  bottom: calc(14px + env(safe-area-inset-bottom, 0px));
   left: 50%;
   transform: translateX(-50%);
   z-index: 100;
   display: flex;
   justify-content: center;
   pointer-events: auto;
+  max-width: calc(100vw - 16px);
+  width: auto;
 }
 
 .mac-dock-surface {
@@ -452,9 +464,17 @@ button, input, select, textarea {
   z-index: 120;
 }
 
-.mac-dock-tooltip.visible {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0) scale(1);
+@media (hover: hover) and (pointer: fine) {
+  .mac-dock-tooltip.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+
+@media (hover: none) {
+  .mac-dock-tooltip {
+    display: none !important;
+  }
 }
 
 .mac-dock-tooltip-text {
@@ -523,7 +543,8 @@ button, input, select, textarea {
   font-size: 2rem;
   font-weight: 700;
   color: var(--text-primary);
-  line-height: 1.15;
+  line-height: 1.25;
+  padding: 2px 0;
 }
 
 .hero-description {
@@ -810,9 +831,8 @@ button, input, select, textarea {
   font-weight: 600;
   font-size: 0.925rem;
   color: var(--text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  line-height: 1.35;
+  word-break: break-word;
 }
 
 .badge-hot {
@@ -836,6 +856,13 @@ button, input, select, textarea {
   color: #fca5a5;
   font-size: 0.7rem;
   font-weight: 500;
+}
+
+.lead-badges-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
 }
 
 .lead-meta-row {
@@ -1554,6 +1581,20 @@ button, input, select, textarea {
 
 .filter-results-count strong {
   color: #ffffff;
+}
+
+.filter-selects-grid {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.filter-footer-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .leads-scroll-container .table-wrapper {
@@ -2848,20 +2889,63 @@ button, input, select, textarea {
    MOBILE RESPONSIVENESS
    ==================================================================== */
 @media (max-width: 768px) {
+  /* 1. Header */
   .outreachly-header {
-    padding: 0 1rem;
+    padding: 0 0.85rem;
     height: 56px;
+    gap: 0.5rem;
   }
 
+  .brand-monogram {
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+  }
+
+  .brand-wordmark {
+    font-size: 1.05rem;
+  }
+
+  .brand-tagline {
+    display: none;
+  }
+
+  .header-actions-container {
+    gap: 0.4rem;
+  }
+
+  .header-status-btn {
+    padding: 5px 8px;
+    font-size: 0.725rem;
+    min-height: 38px;
+  }
+
+  .header-icon-btn {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    min-height: 38px;
+  }
+
+  /* 2. Main Viewport Shell & Content Clearance */
   .outreachly-main-content {
-    padding: 1rem 1rem 5rem 1rem;
+    padding: 0.85rem 0.85rem calc(6.75rem + env(safe-area-inset-bottom, 16px)) 0.85rem;
     height: calc(100vh - 56px);
+    height: calc(100dvh - 56px);
+    overflow-x: hidden;
+  }
+
+  /* 3. Floating Bottom Navigation */
+  .mac-dock-container {
+    bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+    max-width: calc(100vw - 12px);
   }
 
   .mac-dock-surface {
     gap: 4px;
-    padding: 6px 8px;
-    border-radius: 20px;
+    padding: 5px 8px;
+    border-radius: 22px;
+    max-width: 100%;
   }
 
   .mac-dock-btn {
@@ -2870,35 +2954,691 @@ button, input, select, textarea {
     border-radius: 10px;
   }
 
+  .mac-dock-tooltip {
+    display: none !important;
+  }
+
+  .mac-dock-badge {
+    font-size: 0.58rem;
+    padding: 1px 4px;
+    top: -3px;
+    right: -3px;
+  }
+
+  /* 4. Hero Headings & Actions */
+  .workspace-hero {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .workspace-hero.compact {
+    margin-bottom: 0.85rem;
+  }
+
+  .hero-eyebrow {
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+  }
+
   .hero-heading {
-    font-size: 1.5rem;
+    font-size: 1.45rem !important;
+    line-height: 1.25 !important;
+    padding: 2px 0;
   }
 
-  .modal-backdrop {
-    padding: 0.5rem;
-  }
-
-  .modal-container {
-    max-height: 95vh;
-  }
-}
-
-@media (max-width: 480px) {
-  .brand-tagline {
-    display: none;
+  .hero-description {
+    font-size: 0.8rem;
+    line-height: 1.4;
   }
 
   .hero-actions {
     width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
   }
 
-  .btn-premium-primary {
+  .hero-actions > button,
+  .hero-actions > a {
+    flex: 1 1 auto;
+    justify-content: center;
+    min-height: 40px;
+  }
+
+  .btn-premium-primary,
+  .btn-primary {
+    min-height: 42px;
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
     width: 100%;
     justify-content: center;
   }
 
+  .btn-ghost-sm {
+    min-height: 38px;
+    padding: 0.45rem 0.75rem;
+    font-size: 0.78rem;
+  }
+
+  /* 5. Dashboard KPI 2-Column Grid (No Wasted Vertical Space) */
   .kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.65rem;
+  }
+
+  .kpi-card {
+    padding: 0.8rem 0.85rem;
+    gap: 0.4rem;
+    border-radius: 12px;
+  }
+
+  .kpi-header {
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .kpi-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.03em;
+  }
+
+  .kpi-icon-pill {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+  }
+
+  .kpi-value {
+    font-size: 1.6rem !important;
+    line-height: 1.1;
+  }
+
+  .kpi-footer {
+    font-size: 0.68rem;
+    padding-top: 0.35rem;
+  }
+
+  .kpi-footer span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 115px;
+  }
+
+  /* 6. Dashboard Content Split & Priority Leads */
+  .overview-split-layout {
     grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .overview-section-card,
+  .overview-sidebar-card {
+    padding: 1rem;
+    gap: 1rem;
+    border-radius: 14px;
+  }
+
+  .section-card-header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .section-title {
+    font-size: 1.15rem;
+    line-height: 1.25;
+  }
+
+  .section-subtitle {
+    font-size: 0.75rem;
+  }
+
+  .priority-list-container {
+    gap: 0.65rem;
+  }
+
+  .priority-lead-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.65rem;
+    padding: 0.85rem;
+    border-radius: 12px;
+  }
+
+  .lead-main-col {
+    width: 100%;
+    gap: 0.35rem;
+  }
+
+  .lead-name-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .lead-name {
+    font-size: 0.9rem;
+    font-weight: 700;
+    white-space: normal;
+    word-break: break-word;
+    flex: 1 1 auto;
+  }
+
+  .lead-badges-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+
+  .lead-meta-row {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.72rem;
+  }
+
+  .lead-score-col {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    align-self: flex-start;
+  }
+
+  .lead-score-col .score-badge {
+    flex-direction: row;
+    gap: 6px;
+    padding: 3px 8px;
+    align-items: center;
+  }
+
+  .lead-score-col .score-number {
+    font-size: 0.95rem;
+  }
+
+  .lead-score-col .score-label {
+    font-size: 0.58rem;
+  }
+
+  .lead-actions-col {
+    width: 100%;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: stretch;
+    padding-top: 0.4rem;
+    border-top: 1px solid var(--border-glass-subtle);
+  }
+
+  .btn-row-action {
+    flex: 1;
+    justify-content: center;
+    min-height: 36px;
+    font-size: 0.78rem;
+    padding: 6px 10px;
+  }
+
+  .recent-searches-list {
+    gap: 0.5rem;
+  }
+
+  .recent-search-item {
+    padding: 0.75rem;
+  }
+
+  .recent-search-query {
+    font-size: 0.88rem;
+  }
+
+  .recent-search-meta {
+    font-size: 0.72rem;
+  }
+
+  .prospecting-tip-box {
+    padding: 0.75rem 0.85rem;
+    font-size: 0.78rem;
+  }
+
+  /* 7. Leads Database: Hide Desktop Table, Activate Mobile Cards */
+  .desktop-table-container {
+    display: none !important;
+  }
+
+  .mobile-cards-container {
+    display: flex !important;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    overflow-y: visible;
+  }
+
+  .mobile-lead-card {
+    padding: 0.95rem 1rem;
+    border-radius: 12px;
+    gap: 0.65rem;
+    background: rgba(14, 18, 30, 0.75);
+    border: 1px solid var(--border-glass);
+  }
+
+  .mobile-card-title-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+    width: 100%;
+  }
+
+  .mobile-card-title-btn {
+    font-size: 0.925rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-align: left;
+    line-height: 1.3;
+    word-break: break-word;
+    flex: 1;
+    cursor: pointer;
+  }
+
+  .mobile-card-badges-row {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+    font-size: 0.72rem;
+  }
+
+  .mobile-card-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.45rem;
+    padding-top: 0.65rem;
+    margin-top: 0.25rem;
+    border-top: 1px solid var(--border-glass-subtle);
+    width: 100%;
+  }
+
+  .mobile-action-btn {
+    min-height: 38px;
+    padding: 6px 8px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    border-radius: 7px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  /* 8. Filter Bar: 2-Column Responsive Layout */
+  .filter-card {
+    padding: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    border-radius: 12px;
+  }
+
+  .filter-group-left {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .filter-input-search {
+    width: 100%;
+    min-width: 0;
+    height: 42px;
+    font-size: 0.82rem;
+  }
+
+  .filter-selects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.45rem;
+    width: 100%;
+  }
+
+  .filter-select {
+    width: 100%;
+    height: 40px;
+    font-size: 0.78rem;
+    padding: 0 24px 0 8px;
+  }
+
+  .filter-footer-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .filter-results-count {
+    font-size: 0.75rem;
+  }
+
+  /* 9. Discover & Search */
+  .subtab-switcher {
+    width: 100%;
+    display: flex;
+  }
+
+  .subtab-btn {
+    flex: 1;
+    justify-content: center;
+    padding: 8px 10px;
+    font-size: 0.78rem;
+  }
+
+  .discover-grid-layout {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .discover-form-container {
+    width: 100%;
+  }
+
+  .search-card {
+    padding: 1.15rem 1rem;
+    border-radius: 14px;
+  }
+
+  .search-title {
+    font-size: 1.25rem;
+  }
+
+  .search-subtitle {
+    font-size: 0.78rem;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+    margin-bottom: 1rem;
+  }
+
+  .limit-pills {
+    display: flex;
+    width: 100%;
+    gap: 4px;
+  }
+
+  .limit-pill-btn {
+    flex: 1;
+    padding: 8px 4px;
+    font-size: 0.82rem;
+    min-height: 40px;
+  }
+
+  .quick-chips-wrapper {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+
+  .quick-chip {
+    padding: 5px 9px;
+    font-size: 0.75rem;
+    min-height: 32px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.5rem;
+  }
+
+  .saved-searches-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .saved-search-card {
+    padding: 1rem;
+  }
+
+  /* 10. Pipeline Kanban */
+  .pipeline-toolbar-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.75rem !important;
+  }
+
+  .pipeline-actions-group {
+    width: 100% !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .pipeline-kanban-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* 11. Demos Showcase */
+  .demos-filter-bar {
+    padding: 0.85rem 1rem;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.65rem;
+  }
+
+  .demos-search-input-wrapper {
+    width: 100%;
+  }
+
+  .demos-search-input {
+    width: 100%;
+    height: 40px;
+  }
+
+  .demos-grid {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+
+  .demo-record-card {
+    padding: 1rem;
+    border-radius: 14px;
+  }
+
+  .demo-card-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    width: 100%;
+  }
+
+  .btn-demo-action {
+    width: 100%;
+    justify-content: center;
+    min-height: 38px;
+  }
+
+  /* 12. Analytics Workspace */
+  .analytics-metrics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.65rem;
+  }
+
+  .analytics-stat-card {
+    padding: 0.85rem;
+    gap: 0.35rem;
+  }
+
+  .stat-card-title {
+    font-size: 0.7rem;
+  }
+
+  .stat-card-number {
+    font-size: 1.5rem !important;
+  }
+
+  .stat-card-subtitle {
+    font-size: 0.68rem;
+    line-height: 1.35;
+  }
+
+  .analytics-panels-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .analytics-panel {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  /* 13. Settings Workspace */
+  .settings-workspace {
+    padding: 0;
+    gap: 1rem;
+  }
+
+  .settings-card {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .settings-card-header {
+    gap: 0.75rem;
+  }
+
+  .settings-icon-wrapper {
+    width: 34px;
+    height: 34px;
+  }
+
+  .settings-card-title {
+    font-size: 1.05rem;
+  }
+
+  .settings-title-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
+
+  /* 14. Dialogs & Modals */
+  .modal-backdrop {
+    padding: 0.5rem;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-container {
+    max-height: 92vh;
+    max-height: 92dvh;
+    border-radius: 14px;
+    width: 100%;
+  }
+
+  .modal-header {
+    padding: 0.85rem 1rem;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .modal-body {
+    padding: 0.85rem 1rem;
+    gap: 0.85rem;
+  }
+
+  .modal-footer {
+    padding: 0.85rem 1rem;
+    flex-direction: column-reverse;
+    width: 100%;
+    gap: 0.5rem;
+  }
+
+  .modal-footer > div {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .modal-footer button,
+  .modal-footer a {
+    width: 100%;
+    min-height: 42px;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 400px) {
+  .status-text-full {
+    display: none !important;
+  }
+
+  .status-text-short {
+    display: inline !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .outreachly-header {
+    padding: 0 0.65rem;
+  }
+
+  .brand-wordmark {
+    font-size: 0.95rem;
+  }
+
+  .header-status-btn {
+    padding: 4px 6px;
+    font-size: 0.68rem;
+  }
+
+  .mac-dock-surface {
+    gap: 2px;
+    padding: 4px 6px;
+    border-radius: 18px;
+  }
+
+  .mac-dock-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+  }
+
+  .hero-heading {
+    font-size: 1.3rem !important;
+  }
+
+  .kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.5rem;
+  }
+
+  .kpi-card {
+    padding: 0.7rem 0.65rem;
+  }
+
+  .kpi-value {
+    font-size: 1.45rem !important;
+  }
+
+  .kpi-label {
+    font-size: 0.62rem;
+  }
+
+  .mobile-card-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 320px) {
+  .kpi-grid,
+  .analytics-metrics-grid,
+  .filter-selects-grid {
+    grid-template-columns: 1fr !important;
   }
 }
 
